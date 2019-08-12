@@ -7,14 +7,38 @@
 #include "foo.h"
 
 
-void
-uidprog_1(char *host)
+void getEstadisticas(char *host)
+{
+	CLIENT *clnt;
+	estadisticas  *result_2;
+	char *getestadisticas_1_arg;
+#ifndef	DEBUG
+	clnt = clnt_create (host, UIDPROG, UIDVERS, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+	}
+#endif	/* DEBUG */
+	result_2 = getestadisticas_1((void*)&getestadisticas_1_arg, clnt);
+	if (result_2 == (estadisticas *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	else{
+		printf("Cantidad de autenticaciones correctas: %d\n",result_2->cantOk);
+		printf("Cantidad de autenticaciones incorrectas: %d\n",result_2->cantTotal-result_2->cantOk);
+		printf("\tCantidad de fallos con usuario incorrecto: %d\n",result_2->cantUsuarioIncorrecto);
+		printf("\tCantidad de fallos con password incorrecta: %d\n",result_2->cantPassIncorrecta);
+	}
+#ifndef	DEBUG
+	clnt_destroy (clnt);
+#endif	 /* DEBUG */
+}
+
+void autenticar(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
 	autenticacion  autenticar_1_arg;
-	estadisticas  *result_2;
-	char *getestadisticas_1_arg;
 
 #ifndef	DEBUG
 	clnt = clnt_create (host, UIDPROG, UIDVERS, "udp");
@@ -24,8 +48,10 @@ uidprog_1(char *host)
 	}
 #endif	/* DEBUG */
 	
-	autenticar_1_arg.nombreUsuario="pepito";
-	autenticar_1_arg.pass="password";
+	printf("Nombre de usuario: ");
+	scanf("%s",autenticar_1_arg.nombreUsuario);
+	printf("Password: ");
+	scanf("%s",autenticar_1_arg.password);
 	
 	result_1 = autenticar_1(&autenticar_1_arg, clnt);
 	if (result_1 == (int *) NULL) {
@@ -34,21 +60,12 @@ uidprog_1(char *host)
 	else{
 		printf("autenticar volvio bien\n");
 	}
-	result_2 = getestadisticas_1((void*)&getestadisticas_1_arg, clnt);
-	if (result_2 == (estadisticas *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	else{
-		printf("estadisticas volvio bien\n");
-	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
 }
 
-
-int
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
 	char *host;
 
@@ -59,8 +76,29 @@ main (int argc, char *argv[])
 	host = argv[1];
 	do
 	{
-		
+		printf("\n\tMENU");
+		printf("\n\t------------------------------");
+		printf("\n\n\t 1. AUTENTICAR");
+		printf("\n\t 2. ESTADISTICAS");
+		printf("\n\t 3. SALIR");
+		printf("\n\n Enter Your Choice: ");
+		scanf("%1[123]d%*c",&choice);
+		switch(choice)
+		{
+		case 1:
+			autenticar(host);
+			break;
+		case 2:
+			getEstadisticas(host);
+		    break;
+		case 3:
+		    printf("\nYOU SELECTED OPTION 1 %c",3);
+		    exit(0);
+		default:
+			printf("\nINVALID SELECTION...Please try again");
+		}
+		getch();
 	}while(false);
-	uidprog_1 (host);
-exit (0);
+	
+	return 0;
 }
