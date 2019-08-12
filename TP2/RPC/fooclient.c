@@ -7,7 +7,7 @@
 #include "foo.h"
 
 
-void getEstadisticas(char *host)
+void getEstadisticas_client(char *host)
 {
 	CLIENT *clnt;
 	estadisticas  *result_2;
@@ -21,20 +21,24 @@ void getEstadisticas(char *host)
 #endif	/* DEBUG */
 	result_2 = getestadisticas_1((void*)&getestadisticas_1_arg, clnt);
 	if (result_2 == (estadisticas *) NULL) {
+		printf("REVIENTA\n");
 		clnt_perror (clnt, "call failed");
 	}
 	else{
-		printf("Cantidad de autenticaciones correctas: %d\n",result_2->cantOk);
-		printf("Cantidad de autenticaciones incorrectas: %d\n",result_2->cantTotal-result_2->cantOk);
-		printf("\tCantidad de fallos con usuario incorrecto: %d\n",result_2->cantUsuarioIncorrecto);
-		printf("\tCantidad de fallos con password incorrecta: %d\n",result_2->cantPassIncorrecta);
+		printf("\n\n\tRESULTADO");
+		printf("\n\t------------------------------\n");
+		printf("\tCantidad de autenticaciones correctas: %d\n",result_2->cantOk);
+		printf("\tCantidad de autenticaciones incorrectas: %d\n",result_2->cantTotal-result_2->cantOk);
+		printf("\t\tCantidad de fallos con usuario incorrecto: %d\n",result_2->cantUsuarioIncorrecto);
+		printf("\t\tCantidad de fallos con password incorrecta: %d\n",result_2->cantPassIncorrecta);
+		printf("\t\tCantidad de fallos inesperados: %d\n",result_2->cantTotal-result_2->cantOk-result_2->cantUsuarioIncorrecto-result_2->cantPassIncorrecta);
 	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
 }
 
-void autenticar(char *host)
+void autenticar_client(char *host)
 {
 	CLIENT *clnt;
 	int  *result_1;
@@ -48,17 +52,36 @@ void autenticar(char *host)
 	}
 #endif	/* DEBUG */
 	
-	printf("Nombre de usuario: ");
+	autenticar_1_arg.nombreUsuario = malloc(128);
+	autenticar_1_arg.pass = malloc(128);	
+
+	printf("\nNombre de usuario: ");
 	scanf("%s",autenticar_1_arg.nombreUsuario);
 	printf("Password: ");
-	scanf("%s",autenticar_1_arg.password);
+	scanf("%s",autenticar_1_arg.pass);
 	
 	result_1 = autenticar_1(&autenticar_1_arg, clnt);
 	if (result_1 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 	else{
-		printf("autenticar volvio bien\n");
+		printf("\n\n\tRESULTADO");
+		printf("\n\t------------------------------\n");
+		switch(*result_1)
+		{
+		case 0:
+			printf("\tUsuario y password correctos :-)\n");
+			break;
+		case 1:
+			printf("\tUsuario y/o password incorrectos :-(\n");
+			break;
+		case 2:
+			printf("\tOcurrio un error :-(\n");
+			break;
+		default:
+			printf("\nERROR FATAL");
+			exit(0);
+		}
 	}
 #ifndef	DEBUG
 	clnt_destroy (clnt);
@@ -68,6 +91,7 @@ void autenticar(char *host)
 int main (int argc, char *argv[])
 {
 	char *host;
+	char choice;
 
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
@@ -82,23 +106,25 @@ int main (int argc, char *argv[])
 		printf("\n\t 2. ESTADISTICAS");
 		printf("\n\t 3. SALIR");
 		printf("\n\n Enter Your Choice: ");
-		scanf("%1[123]d%*c",&choice);
+		scanf("%c",&choice);
 		switch(choice)
 		{
-		case 1:
-			autenticar(host);
+		case '1':
+			autenticar_client(host);
 			break;
-		case 2:
-			getEstadisticas(host);
+		case '2':
+			getEstadisticas_client(host);
 		    break;
-		case 3:
-		    printf("\nYOU SELECTED OPTION 1 %c",3);
+		case '3':
 		    exit(0);
 		default:
 			printf("\nINVALID SELECTION...Please try again");
 		}
-		getch();
-	}while(false);
+		getchar();
+		printf("\nPresione ENTER para continuar\n");
+		getchar();
+		//getc();
+	}while(1);
 	
 	return 0;
 }
