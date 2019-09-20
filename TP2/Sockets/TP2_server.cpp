@@ -6,12 +6,70 @@
 #include <string.h> 
 #define PORT 8080 
 
+void autenticar_1_svc(char buffer[1024], int new_socket)
+{
+    static int result;
+    int n;
+    char *nombreUsuario,*pass;
+    int usuarioOk=0,i=0;
+    char new_buffer[1024];
+
+    nombreUsuario = malloc(128);
+    pass = malloc(128);
+
+    cantTotal++;
+    
+    if(freopen("usuarios.txt","r",stdin)==NULL)
+    {
+        result=2;
+        return &result;
+    }
+    scanf("%d",&n);
+    while(i<n)
+    {
+        scanf("%s",nombreUsuario);
+        scanf("%s",pass);
+        if(strcmp(nombreUsuario,argp->nombreUsuario)==0)
+        {
+            usuarioOk=1;
+            if(strcmp(pass,argp->pass)==0)
+            {
+                cantOk++;
+                result=0;
+                return &result;
+            }
+        }
+        i++;
+    }
+    if(usuarioOk) cantPassIncorrecta++;
+    else cantUsuarioIncorrecto++;
+    result=1;
+
+send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+
+}
+
+void getestadisticas_1_svc(char buffer[1024], int new_socket)
+{
+    char new_buffer[1024];
+
+    strcat(new_buffer[1024],cantOk);
+    strcat(new_buffer[1024],"|");
+    strcat(new_buffer[1024],cantUsuarioIncorrecto);
+    strcat(new_buffer[1024],"|");
+    strcat(new_buffer[1024],cantPassIncorrecta);
+    strcat(new_buffer[1024],"|");
+    strcat(new_buffer[1024],cantTotal);
+
+    send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+}
+
+
 int main(){
 	int server_fd,new_socket;
 	int opt = 1;
 	sockaddr_in address;
 	int addrlen = sizeof(address);
-	char server_ans[1024] = "hola capo, tu conexion fue exitosa";
 
 	// Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -53,8 +111,13 @@ int main(){
 	        exit(EXIT_FAILURE); 
 	    }
 	    int valread = read( new_socket , buffer, 1024); 
-    	printf("server recieve: %s\n",buffer);
-    	send(new_socket , server_ans , strlen(server_ans) , 0 ); 
-    	printf("Server answer sent\n"); 
+    
+        if (buffer[0] == '1')
+        {
+          autenticar_1_svc(buffer,new_socket);
+        }else{
+          getestadisticas_1_svc(buffer,new_socket);
+        }
+
 	}
 }
