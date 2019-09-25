@@ -1,0 +1,86 @@
+#include <sp.h>
+
+const char SPREAD_NAME[4] = "4803";
+
+
+int main( int argc, char *argv[] )
+{
+
+mailbox *mbox;
+char *GROUP_NAME;
+int return_connect;
+int members = 0;
+char *message;
+
+
+return_connect = SP_connect(SPREAD_NAME,argv[1],1, 0, mbox,GROUP_NAME);
+
+if (return_connect != ACCEPT_SESSION)
+	{
+		printf("ERROR!");
+		return 0; 
+	}
+
+
+
+	if (SP_join (mbox,GROUP_NAME) != 0)
+	{
+		printf("ERROR al hacer Join!");
+		return 0; 
+	}
+
+
+	//ESPERAR HASTA QUE ESTEN TODOS LOS MIEMBROS CONECTADOS
+	while( members < atoi(argv[2])){
+
+		// members = SP_get_members();
+	}
+
+
+	
+
+int cont = 0;
+service *service_type;
+char sender[128];
+int *num_groups;
+char groups[1][128];
+int16 *mess_type;
+int *mismatch;
+char *mess;
+for (int i = 0; i <  argv[3]; ++i)
+{
+
+	for (int j = 0; j < argv[4]; ++j)
+	{
+		strcat(message,(char)((33+i)%(126-33)));
+	}
+
+	int return_multicast;
+
+	return_multicast = SP_multicast(mbox,RELIABLE_MESS,GROUP_NAME,0,argv[4],message);
+	
+	if (return_multicast < 0)
+	{
+		printf("ERROR al enviar mensaje!");
+		SP_leave (mbox,GROUP_NAME);
+		return 0; 
+	}
+
+
+	while(cont < argv[2]){
+	 if (SP_receive(mbox,service_type,sender,1,num_groups,groups,mess_type,mismatch,atoi(argv[4]),mess)<0)
+	  {
+	  	printf("ERROR al recibir el mensaje!");
+		return 0;
+	  }
+		cont++;
+	}
+}
+	
+
+	return 0;
+}
+
+
+
+
