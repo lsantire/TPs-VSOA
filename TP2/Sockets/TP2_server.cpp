@@ -6,6 +6,11 @@
 #include <string.h> 
 #define PORT 8080 
 
+int cantOk;
+int cantUsuarioIncorrecto;
+int cantPassIncorrecta;
+int cantTotal;
+
 void autenticar_1_svc(char buffer[1024], int new_socket)
 {
     static int result;
@@ -21,45 +26,86 @@ void autenticar_1_svc(char buffer[1024], int new_socket)
     
     if(freopen("usuarios.txt","r",stdin)==NULL)
     {
-        result=2;
-        return &result;
+        new_buffer="2";
+        send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+        return;
     }
     scanf("%d",&n);
+
+    char nombreUsuarioAuth[128];
+    char passAuth[128];
+
+    int posNombreAuth = 0;
+    int posPassAuth = -1;
+
+    for (int i = 1;buffer[i] != '\0'; ++i)
+    {
+        if (buffer[i] == '|')
+        {
+            posPassAuth = 0;
+        }else{
+            if (posPassAuth != -1)
+            {
+                passAuth[posPassAuth++] = buffer[i];
+            }else{
+                nombreUsuarioAuth[posNombreAuth++] = buffer[i];
+            }
+        }
+        
+    }
+
+    if (posPassAuth == -1)
+    {
+        posPassAuth++;
+    }
+
+    passAuth[posPassAuth] = '\0';
+    nombreUsuarioAuth[posNombreAuth] = '\0';
+
     while(i<n)
     {
         scanf("%s",nombreUsuario);
         scanf("%s",pass);
-        if(strcmp(nombreUsuario,argp->nombreUsuario)==0)
+
+        if(strcmp(nombreUsuario,nombreUsuarioAuth)==0)
         {
             usuarioOk=1;
-            if(strcmp(pass,argp->pass)==0)
+            if(strcmp(pass,passAuth)==0)
             {
                 cantOk++;
-                result=0;
-                return &result;
+                new_buffer="0";
+                send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+                return;
             }
         }
         i++;
     }
     if(usuarioOk) cantPassIncorrecta++;
     else cantUsuarioIncorrecto++;
-    result=1;
+    new_buffer="1";
 
 send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
-
 }
 
-void getestadisticas_1_svc(char buffer[1024], int new_socket)
+void getestadisticas_1_svc(int new_socket)
 {
-    char new_buffer[1024];
+    char aux[128];
+    char new_buffer[1024] = "";
 
-    strcat(new_buffer[1024],cantOk);
+    itoa(cantOk,aux,10);
+    strcat(new_buffer[1024],aux);
     strcat(new_buffer[1024],"|");
-    strcat(new_buffer[1024],cantUsuarioIncorrecto);
+
+    itoa(cantUsuarioIncorrecto,aux,10);
+    strcat(new_buffer[1024],aux);
     strcat(new_buffer[1024],"|");
-    strcat(new_buffer[1024],cantPassIncorrecta);
+
+    itoa(cantPassIncorrecta,aux,10);
+    strcat(new_buffer[1024],aux);
     strcat(new_buffer[1024],"|");
-    strcat(new_buffer[1024],cantTotal);
+
+    itoa(cantTotal,aux,10);
+    strcat(new_buffer[1024],aux);
 
     send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
 }
@@ -116,7 +162,7 @@ int main(){
         {
           autenticar_1_svc(buffer,new_socket);
         }else{
-          getestadisticas_1_svc(buffer,new_socket);
+          getestadisticas_1_svc(new_socket);
         }
 
 	}

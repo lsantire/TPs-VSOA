@@ -59,13 +59,50 @@ void getEstadisticas_client(int sock)
     send(sock , message , strlen(message) , 0 );
 	valread = read(sock, buffer, 1024); 
 
+	int cantOk;
+	int cantUsuarioIncorrecto;
+	int cantPassIncorrecta;
+	int cantTotal;
+
+	int pos = 0;
+	int varActual = 0;
+	char aux[128];
+
+  	for (int i = 0;buffer[i] != '\0'; ++i){
+
+       	if (buffer[i] == '|')
+        {
+        	aux[pos] = '\0';
+        	switch(varActual){
+        		case 0:
+        			cantOk = atoi(aux);
+        			break;
+        		case 1:
+					cantUsuarioIncorrecto = atoi(aux);
+        			break;
+        		case 2: 
+					cantPassIncorrecta = atoi(aux);
+        			break;
+        	}	
+            varActual++;
+            pos = 0;
+        }else{
+            aux[pos++] = buffer[i];
+        }
+    }
+
+    aux[pos] = '\0';
+    cantTotal = atoi(aux);
+
+
+
 		printf("\n\n\tRESULTADO");
 		printf("\n\t------------------------------\n");
-		printf("\tCantidad de autenticaciones correctas: %d\n",);
-		printf("\tCantidad de autenticaciones incorrectas: %d\n",);
-		printf("\t\tCantidad de fallos con usuario incorrecto: %d\n",);
-		printf("\t\tCantidad de fallos con password incorrecta: %d\n",);
-		printf("\t\tCantidad de fallos inesperados: %d\n",);
+		printf("\tCantidad de autenticaciones correctas: %d\n",cantOk);
+		printf("\tCantidad de autenticaciones incorrectas: %d\n",cantTotal-cantOk);
+		printf("\t\tCantidad de fallos con usuario incorrecto: %d\n",cantUsuarioIncorrecto);
+		printf("\t\tCantidad de fallos con password incorrecta: %d\n",cantPassIncorrecta);
+		printf("\t\tCantidad de fallos inesperados: %d\n",cantTotal-cantUsuarioIncorrecto-cantPassIncorrecta-cantOk);
 }
 
 int main(int argc, char const *argv[]) {
