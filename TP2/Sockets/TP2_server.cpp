@@ -15,19 +15,15 @@ void autenticar_1_svc(char buffer[1024], int new_socket)
 {
     static int result;
     int n;
-    char *nombreUsuario,*pass;
+    char nombreUsuario[128],pass[128];
     int usuarioOk=0,i=0;
     char new_buffer[1024];
-
-    nombreUsuario = malloc(128);
-    pass = malloc(128);
 
     cantTotal++;
     
     if(freopen("usuarios.txt","r",stdin)==NULL)
     {
-        new_buffer="2";
-        send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+        send(new_socket , "2" , 1 , 0 ); 
         return;
     }
     scanf("%d",&n);
@@ -38,7 +34,7 @@ void autenticar_1_svc(char buffer[1024], int new_socket)
     int posNombreAuth = 0;
     int posPassAuth = -1;
 
-    for (int i = 1;buffer[i] != '\0'; ++i)
+    for (int i = 2;buffer[i] != '\0'; ++i)
     {
         if (buffer[i] == '|')
         {
@@ -73,8 +69,7 @@ void autenticar_1_svc(char buffer[1024], int new_socket)
             if(strcmp(pass,passAuth)==0)
             {
                 cantOk++;
-                new_buffer="0";
-                send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+                send(new_socket , "0" , 1 , 0 ); 
                 return;
             }
         }
@@ -82,30 +77,38 @@ void autenticar_1_svc(char buffer[1024], int new_socket)
     }
     if(usuarioOk) cantPassIncorrecta++;
     else cantUsuarioIncorrecto++;
-    new_buffer="1";
 
-send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
+    send(new_socket , "1" , 1 , 0 ); 
+}
+
+int toString(int x, char str[]){
+    if(x<10){
+	str[0]=x+'0';
+	return 1;
+    }
+    int aux = toString(x/10, str);
+    str[aux] = x%10+'0';
 }
 
 void getestadisticas_1_svc(int new_socket)
 {
     char aux[128];
-    char new_buffer[1024] = "";
+    char new_buffer[1024]="";
 
-    itoa(cantOk,aux,10);
-    strcat(new_buffer[1024],aux);
-    strcat(new_buffer[1024],"|");
+    toString(cantOk,aux);
+    strcat(new_buffer,aux);
+    strcat(new_buffer,"|");
 
-    itoa(cantUsuarioIncorrecto,aux,10);
-    strcat(new_buffer[1024],aux);
-    strcat(new_buffer[1024],"|");
+    toString(cantUsuarioIncorrecto,aux);
+    strcat(new_buffer,aux);
+    strcat(new_buffer,"|");
 
-    itoa(cantPassIncorrecta,aux,10);
-    strcat(new_buffer[1024],aux);
-    strcat(new_buffer[1024],"|");
+    toString(cantPassIncorrecta,aux);
+    strcat(new_buffer,aux);
+    strcat(new_buffer,"|");
 
-    itoa(cantTotal,aux,10);
-    strcat(new_buffer[1024],aux);
+    toString(cantTotal,aux);
+    strcat(new_buffer,aux);
 
     send(new_socket , new_buffer , strlen(new_buffer) , 0 ); 
 }
@@ -142,10 +145,7 @@ int main(){
         perror("bind failed"); 
         exit(EXIT_FAILURE); 
     } 
-
-	while(true)
-	{
-		char buffer[1024] = {0};
+char buffer[1024] = {0};
 		if (listen(server_fd, 3) < 0) 
     	{ 
        		perror("listen"); 
@@ -156,6 +156,10 @@ int main(){
 	        perror("accept"); 
 	        exit(EXIT_FAILURE); 
 	    }
+
+	while(true)
+	{
+		
 	    int valread = read( new_socket , buffer, 1024); 
     
         if (buffer[0] == '1')

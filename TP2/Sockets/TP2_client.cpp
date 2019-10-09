@@ -12,8 +12,8 @@ using namespace std;
 void autenticar_client(int sock)
 {
 char message[128]="1|";
-char *nombreUsuario = malloc(128);
-char *pass = malloc(128);	
+char nombreUsuario[128];
+char pass[128];
 int valread,result;
 char buffer[1024] = {0};
 
@@ -108,7 +108,8 @@ void getEstadisticas_client(int sock)
 int main(int argc, char const *argv[]) {
     
     sockaddr_in address,serv_addr; 
-    int sock = 0; 
+    int sock = 0;
+    char choice; 
    
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
