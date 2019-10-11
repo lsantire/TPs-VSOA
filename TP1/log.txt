@@ -1,0 +1,7 @@
+lxc-start cont1 20191011031246.167 ERROR    network - network.c:lxc_create_network_unpriv_exec:2178 - lxc-user-nic failed to configure requested network: cmd/lxc_user_nic.c: 1296: main: Quota reached
+lxc-start cont1 20191011031246.167 ERROR    start - start.c:lxc_spawn:1765 - Failed to create the configured network
+lxc-start cont1 20191011031246.167 ERROR    lxccontainer - lxccontainer.c:wait_on_daemonized_start:842 - Received container state "ABORTING" instead of "RUNNING"
+lxc-start cont1 20191011031246.167 ERROR    lxc_start - tools/lxc_start.c:main:330 - The container failed to start
+lxc-start cont1 20191011031246.167 ERROR    lxc_start - tools/lxc_start.c:main:333 - To get more details, run the container in foreground mode
+lxc-start cont1 20191011031246.168 ERROR    lxc_start - tools/lxc_start.c:main:336 - Additional information can be obtained by setting the --logfile and --logpriority options
+lxc-start cont1 20191011031246.168 ERROR    start - start.c:__lxc_start:1939 - Failed to spawn container "cont1"
