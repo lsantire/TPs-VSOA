@@ -9,8 +9,6 @@ char SPREAD_NAME[80] = "4803@";
 
 int main( int argc, char *argv[] )
 {
-	/*printf("%d\n%d\n%d\n%d\n%d\n", ILLEGAL_SESSION, ILLEGAL_MESSAGE, CONNECTION_CLOSED, GROUPS_TOO_SHORT, BUFFER_TOO_SHORT);*/
-
 	if(argc < 5 || argc > 6)
 	{
 		printf("Incorrect number of arguments.\nExpected execution: spreadBench <NODE ID> <MAX NODES> <MSG COUNT> <MSG LEN> [<DAEMON IP>]\n");
@@ -31,7 +29,7 @@ int main( int argc, char *argv[] )
 	int spResult;
 	char privateGroupName[MAX_GROUP_NAME];
 	char sender[MAX_GROUP_NAME];
-	char groups[1][MAX_GROUP_NAME];
+	char groups[10][MAX_GROUP_NAME];
 	char auxStr[2];
 	char  message[MAX_MESSAGE_LENGTH];
 	char receivedMessage[MAX_MESSAGE_LENGTH]; 
@@ -61,7 +59,7 @@ int main( int argc, char *argv[] )
 	while(!everyoneIn)
 	{
 		printf("Waiting for message...\n");
-		spResult = SP_receive(mbox, &service_type, sender, 1, &numGroups, groups, &mess_type, &mismatch, sizeof(receivedMessage), receivedMessage);
+		spResult = SP_receive(mbox, &service_type, sender, 10, &numGroups, groups, &mess_type, &mismatch, sizeof(receivedMessage), receivedMessage);
 		if(spResult<0)
 		{
 	  		printf("ERROR while receiving a message: %d\n", spResult);
@@ -131,7 +129,7 @@ int main( int argc, char *argv[] )
 		{
 			printf("Waiting for message...\n");
 			strcpy(receivedMessage, "");
-			if (SP_receive(mbox, &service_type, sender, 1, &numGroups, groups, &mess_type, &mismatch, sizeof(receivedMessage), receivedMessage) < 0)
+			if (SP_receive(mbox, &service_type, sender, 10, &numGroups, groups, &mess_type, &mismatch, sizeof(receivedMessage), receivedMessage) < 0)
 			{
 			  	printf("ERROR while receiving message\n");
 			  	SP_leave (mbox,GROUP_NAME);
@@ -149,7 +147,7 @@ int main( int argc, char *argv[] )
 				SP_leave(mbox,GROUP_NAME);
 				return 0;
 			}
-			printf("Message received: %s\n", receivedMessage);
+			printf("Message received: %s (sender = %s)\n", receivedMessage, sender);
 			messagesReceived++;
 		}
 	}
