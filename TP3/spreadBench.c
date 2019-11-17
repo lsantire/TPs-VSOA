@@ -9,6 +9,7 @@ char SPREAD_NAME[80] = "4803@";
 
 int main( int argc, char *argv[] )
 {
+	/*printf("%d\n%d\n%d\n%d\n%d\n", ILLEGAL_SESSION, ILLEGAL_MESSAGE, CONNECTION_CLOSED, GROUPS_TOO_SHORT, BUFFER_TOO_SHORT);*/
 
 	if(argc < 5 || argc > 6)
 	{
@@ -30,7 +31,7 @@ int main( int argc, char *argv[] )
 	int spResult;
 	char privateGroupName[MAX_GROUP_NAME];
 	char sender[MAX_GROUP_NAME];
-	char groups[1][32];
+	char groups[1][MAX_GROUP_NAME];
 	char auxStr[2];
 	char  message[MAX_MESSAGE_LENGTH];
 	char receivedMessage[MAX_MESSAGE_LENGTH]; 
