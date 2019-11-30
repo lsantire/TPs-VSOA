@@ -19,7 +19,7 @@ int main( int argc, char *argv[] )
 	if(argc==5) strcat(SPREAD_NAME, "localhost");
 	else strcat(SPREAD_NAME, argv[5]);
 	
-	clcok_t tiempo_inicio, tiempo_final;
+	clock_t tiempo_inicio, tiempo_final;
 	double segundos,bytesMen=0.0,throughput=0.0;
 	int membersExpected = atoi(argv[2]);
 	int membersConnected = 0;
@@ -159,7 +159,7 @@ int main( int argc, char *argv[] )
 	tiempo_final = clock();
 	bytesMen = cantMessages * messageLength * membersExpected;
 	segundos = (double) (tiempo_inicio - tiempo_final) / CLOCKS_PER_SEC;
-	throughput = (double) byteMen/segundos;
+	throughput = (double) bytesMen/segundos;
 
 	printf("Time: %i\n", segundos);
 	printf("Throughput: %d\n", throughput);

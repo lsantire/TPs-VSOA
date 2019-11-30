@@ -433,7 +433,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/lsantire/Desktop/spread-src-5.0.1/libspread-util'
+ac_pwd='/home/eltomaa/Desktop/TPs-VSOA/TP3/spread-src-5.0.1/libspread-util'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 test -n "$AWK" || AWK=awk
