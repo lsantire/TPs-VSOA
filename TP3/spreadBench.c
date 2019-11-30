@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #define GROUP_NAME "vsoa_tp3"
 #define MAX_MESSAGE_LENGTH 10000
 
@@ -17,7 +18,9 @@ int main( int argc, char *argv[] )
 	
 	if(argc==5) strcat(SPREAD_NAME, "localhost");
 	else strcat(SPREAD_NAME, argv[5]);
-
+	
+	clock_t tiempo_inicio, tiempo_final;
+	float milliseconds=0.0F,bytesMen=0.0F,throughput=0.0F;
 	int membersExpected = atoi(argv[2]);
 	int membersConnected = 0;
 	int numGroups;
@@ -36,7 +39,7 @@ int main( int argc, char *argv[] )
 	mailbox mbox;
 	service service_type;
 	int16 mess_type;
-	bool everyoneIn = 0;
+	_Bool everyoneIn = 0;
 
 	if(messageLength >= MAX_MESSAGE_LENGTH)
 	{
@@ -101,6 +104,8 @@ int main( int argc, char *argv[] )
 			return 0;
 		}
 	}
+	
+	tiempo_inicio = clock();	
 
 	for (int i = 0; i <  cantMessages; ++i)
 	{
@@ -116,7 +121,7 @@ int main( int argc, char *argv[] )
 
 
 		printf("Sending message: %s\n", message);
-		if (SP_multicast(mbox, RELIABLE_MESS, GROUP_NAME, 0, strlen(message), message) < 0)
+		if (SP_multicast(mbox, SAFE_MESS, GROUP_NAME, 0, strlen(message), message) < 0)
 		{
 			printf("ERROR while sending message\n");
 			SP_leave (mbox,GROUP_NAME);
@@ -151,6 +156,13 @@ int main( int argc, char *argv[] )
 			messagesReceived++;
 		}
 	}
+	tiempo_final = clock();
+	bytesMen = cantMessages * messageLength * membersExpected;
+	milliseconds = ((float) (tiempo_final - tiempo_inicio) /1000000.0F)*1000;
+	throughput = (float) bytesMen/ (milliseconds / 1000);
+
+	printf("Time in milliseconds: %f\n", milliseconds);
+	printf("Throughput Bytes/Sec: %f\n", throughput);
 	
 	SP_leave(mbox,GROUP_NAME);
 	
