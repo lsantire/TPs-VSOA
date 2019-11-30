@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #define GROUP_NAME "vsoa_tp3"
 #define MAX_MESSAGE_LENGTH 10000
 
@@ -17,7 +18,9 @@ int main( int argc, char *argv[] )
 	
 	if(argc==5) strcat(SPREAD_NAME, "localhost");
 	else strcat(SPREAD_NAME, argv[5]);
-
+	
+	clcok_t tiempo_inicio, tiempo_final;
+	double segundos,bytesMen=0.0,throughput=0.0;
 	int membersExpected = atoi(argv[2]);
 	int membersConnected = 0;
 	int numGroups;
@@ -101,6 +104,8 @@ int main( int argc, char *argv[] )
 			return 0;
 		}
 	}
+	
+	tiempo_inicio = clock();	
 
 	for (int i = 0; i <  cantMessages; ++i)
 	{
@@ -151,6 +156,13 @@ int main( int argc, char *argv[] )
 			messagesReceived++;
 		}
 	}
+	tiempo_final = clock();
+	bytesMen = cantMessages * messageLength * membersExpected;
+	segundos = (double) (tiempo_inicio - tiempo_final) / CLOCKS_PER_SEC;
+	throughput = (double) byteMen/segundos;
+
+	printf("Time: %i\n", segundos);
+	printf("Throughput: %d\n", throughput);
 	
 	SP_leave(mbox,GROUP_NAME);
 	
