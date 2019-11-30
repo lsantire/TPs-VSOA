@@ -121,7 +121,7 @@ int main( int argc, char *argv[] )
 
 
 		printf("Sending message: %s\n", message);
-		if (SP_multicast(mbox, CAUSAL_MESS, GROUP_NAME, 0, strlen(message), message) < 0)
+		if (SP_multicast(mbox, SAFE_MESS, GROUP_NAME, 0, strlen(message), message) < 0)
 		{
 			printf("ERROR while sending message\n");
 			SP_leave (mbox,GROUP_NAME);
