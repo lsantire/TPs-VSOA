@@ -185,7 +185,7 @@ configure: failed program was:
 configure:3292: result: no
 configure:3303: checking for library containing shm_open
 configure:3334: gcc -o conftest -g -O2 -Wall   conftest.c -lpthread  >&5
-/tmp/ccF9jOj6.o: In function `main':
+/tmp/cchvxvhS.o: In function `main':
 /home/eltomaa/Desktop/TPs-VSOA/TP3/spread-src-5.0.1/stdutil/conftest.c:21: undefined reference to `shm_open'
 collect2: error: ld returned 1 exit status
 configure:3334: $? = 1
@@ -1350,7 +1350,6 @@ on eltomaa-VirtualBox
 
 config.status:857: creating src/Makefile
 config.status:857: creating src/stdutil/private/stdarch_autoconf.h
-config.status:1032: src/stdutil/private/stdarch_autoconf.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##

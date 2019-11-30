@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
 	mailbox mbox;
 	service service_type;
 	int16 mess_type;
-	bool everyoneIn = 0;
+	_Bool everyoneIn = 0;
 
 	if(messageLength >= MAX_MESSAGE_LENGTH)
 	{
@@ -161,7 +161,7 @@ int main( int argc, char *argv[] )
 	segundos = (double) (tiempo_inicio - tiempo_final) / CLOCKS_PER_SEC;
 	throughput = (double) bytesMen/segundos;
 
-	printf("Time: %i\n", segundos);
+	printf("Time: %d\n", segundos);
 	printf("Throughput: %d\n", throughput);
 	
 	SP_leave(mbox,GROUP_NAME);
