@@ -20,7 +20,7 @@ int main( int argc, char *argv[] )
 	else strcat(SPREAD_NAME, argv[5]);
 	
 	clock_t tiempo_inicio, tiempo_final;
-	double segundos,bytesMen=0.0,throughput=0.0;
+	float milliseconds,bytesMen=0.0F,throughput=0.0F;
 	int membersExpected = atoi(argv[2]);
 	int membersConnected = 0;
 	int numGroups;
@@ -158,11 +158,11 @@ int main( int argc, char *argv[] )
 	}
 	tiempo_final = clock();
 	bytesMen = cantMessages * messageLength * membersExpected;
-	segundos = (double) (tiempo_inicio - tiempo_final) / CLOCKS_PER_SEC;
-	throughput = (double) bytesMen/segundos;
+	milliseconds = ((float) (tiempo_final - tiempo_inicio) / 1000000.0F) *1000;
+	throughput = (float) bytesMen/ (milliseconds / 1000);
 
-	printf("Time: %d\n", segundos);
-	printf("Throughput: %d\n", throughput);
+	printf("Time in milliseconds: %d\n", milliseconds);
+	printf("Throughput Bytes/Sec: %d\n", throughput);
 	
 	SP_leave(mbox,GROUP_NAME);
 	
