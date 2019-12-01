@@ -15,9 +15,9 @@ int * autenticar_1_svc(autenticacion *argp, struct svc_req *rqstp)
 {
 	static int result;
 	int n;
-	char *nombreUsuario,*pass;
+	char *nombreUsuario, *pass;
 	int usuarioOk=0,i=0;
-	
+
 	nombreUsuario = malloc(128);
 	pass = malloc(128);
 
